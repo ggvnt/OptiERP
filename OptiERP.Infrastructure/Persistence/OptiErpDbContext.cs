@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using OptiERP.Domain.Entities;
 
 namespace OptiERP.Infrastructure.Persistence;
 
@@ -9,4 +10,8 @@ public class OptiErpDbContext : DbContext
         : base(options)
     {
     }
+
+    public DbSet<User> Users { get; set; }
+
+
 }
