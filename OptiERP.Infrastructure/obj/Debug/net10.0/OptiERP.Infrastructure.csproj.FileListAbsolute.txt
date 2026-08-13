@@ -16,3 +16,5 @@ D:\MY Cording Project\OptiERP\OptiERP.Infrastructure\obj\Debug\net10.0\OptiERP.I
 D:\MY Cording Project\OptiERP\OptiERP.Infrastructure\obj\Debug\net10.0\refint\OptiERP.Infrastructure.dll
 D:\MY Cording Project\OptiERP\OptiERP.Infrastructure\obj\Debug\net10.0\OptiERP.Infrastructure.pdb
 D:\MY Cording Project\OptiERP\OptiERP.Infrastructure\obj\Debug\net10.0\ref\OptiERP.Infrastructure.dll
+D:\MY Cording Project\OptiERP\OptiERP.Infrastructure\bin\Debug\net10.0\OptiERP.Infrastructure.runtimeconfig.json
+D:\MY Cording Project\OptiERP\OptiERP.Infrastructure\obj\Debug\net10.0\OptiERP.Infrastructure.genruntimeconfig.cache

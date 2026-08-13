@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("OptiERP.Application")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+70dd0ac45117b1f44b79c304b17d41fc2f7fc5e5")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+96a7fa4efa1ca6fc1cb63152dad94a151747fd4c")]
 [assembly: System.Reflection.AssemblyProductAttribute("OptiERP.Application")]
 [assembly: System.Reflection.AssemblyTitleAttribute("OptiERP.Application")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
