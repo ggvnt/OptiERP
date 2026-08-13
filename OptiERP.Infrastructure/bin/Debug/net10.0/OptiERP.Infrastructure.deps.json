@@ -1,0 +1,56 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v10.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v10.0": {
+      "OptiERP.Infrastructure/1.0.0": {
+        "dependencies": {
+          "OptiERP.Application": "1.0.0",
+          "OptiERP.Domain": "1.0.0"
+        },
+        "runtime": {
+          "OptiERP.Infrastructure.dll": {}
+        }
+      },
+      "OptiERP.Application/1.0.0": {
+        "dependencies": {
+          "OptiERP.Domain": "1.0.0"
+        },
+        "runtime": {
+          "OptiERP.Application.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "OptiERP.Domain/1.0.0": {
+        "runtime": {
+          "OptiERP.Domain.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "OptiERP.Infrastructure/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "OptiERP.Application/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "OptiERP.Domain/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="OptiERP.Api/OptiERP.Api.csproj" />
+  <Project Path="OptiERP.Application/OptiERP.Application.csproj" />
+  <Project Path="OptiERP.Contracts/OptiERP.Contracts.csproj" />
+  <Project Path="OptiERP.Domain/OptiERP.Domain.csproj" />
+  <Project Path="OptiERP.Infrastructure/OptiERP.Infrastructure.csproj" />
+</Solution>
