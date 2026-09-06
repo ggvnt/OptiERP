@@ -1,6 +1,8 @@
 using ErrorOr;
 using Microsoft.EntityFrameworkCore;
 using OptiERP.Application.Interfaces;
+using OptiERP.Application.Interfaces.Authentication;
+using OptiERP.Application.UserCommands.Login.Normal;
 using OptiERP.Application.UserCommands.UserRegister;
 using OptiERP.Domain.Entities;
 using OptiERP.Infrastructure.Persistence;
@@ -11,13 +13,16 @@ public class UserRepository : IUserRepository
 {
     private readonly OptiErpDbContext _dbContext;
     private readonly IPasswordHasher _passwordHasher;
+    private readonly IJwtTokenGenerator _jwtTokenGenerator;
 
     public UserRepository(
         OptiErpDbContext dbContext,
-        IPasswordHasher passwordHasher)
+        IPasswordHasher passwordHasher,
+        IJwtTokenGenerator jwtTokenGenerator)
     {
         _dbContext = dbContext;
         _passwordHasher = passwordHasher;
+        _jwtTokenGenerator = jwtTokenGenerator;
     }
 
     public async Task<ErrorOr<UserRegisterResult>> RegisterUserAsync(
@@ -69,12 +74,58 @@ public class UserRepository : IUserRepository
         await _dbContext.SaveChangesAsync(
             cancellationToken);
 
+        var token = _jwtTokenGenerator.GenerateToken(user);
+
         // Return result
         return new UserRegisterResult(
             user.Id,
             user.Username,
             user.Email,
             user.IsActive,
-            user.CreatedAt);
+            user.CreatedAt,
+            token);
+    }
+
+    public async Task<ErrorOr<UserLoginResult>> LoginUserAsync(
+        UserLoginCommand command,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var user = await _dbContext.Users
+            .FirstOrDefaultAsync(
+                x => x.Email == command.Email,
+                cancellationToken);
+        
+        if (user is null)
+        {
+            return Error.NotFound(
+                "User.Email",
+                "User with the provided email does not exist.");
+        }
+
+        var passwordValid = _passwordHasher.VerifyPassword(
+            command.Password,
+            user.PasswordHash);
+
+        if (!passwordValid)
+        {
+            return Error.Unauthorized(
+                "User.Password",
+                "Invalid password.");
+        }
+
+        if (!user.IsActive)
+        {
+            return Error.Validation(
+                "User.IsActive",
+                "User account is not active.");
+        }
+
+        var token = _jwtTokenGenerator.GenerateToken(user);
+
+        return new UserLoginResult(
+            token,
+            user.Id,
+            user.Email);
     }
 }

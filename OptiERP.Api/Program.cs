@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
 using OptiERP.Infrastructure;
 using OptiERP.Infrastructure.Persistence;
+using MediatR;
+using OptiERP.Application.UserCommands.UserRegister;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +24,13 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddAuth(builder.Configuration);
+
+builder.Services.AddMediatR(cfg =>
+{
+    cfg.RegisterServicesFromAssembly(
+        typeof(UserRegisterCommandHandler).Assembly);
+});
 
 var app = builder.Build();
 

@@ -1,4 +1,7 @@
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using OptiERP.Application.Interfaces.Authentication;
+using OptiERP.Application.UserCommands.Login.Normal;
 using OptiERP.Application.UserCommands.UserRegister;
 
 namespace OptiERP.Api.Controller;
@@ -8,11 +11,14 @@ namespace OptiERP.Api.Controller;
 
 public class UserController : ControllerBase
 {
-    private readonly UserRegisterCommandHandler _userRegisterCommandHandler;
+    private readonly ISender _sender;
+    private readonly IJwtTokenGenerator _jwtTokenGenerator;
+    private readonly IUserRepository _userRepository;
 
-    public UserController(UserRegisterCommandHandler handler)
+    public UserController(ISender sender, IUserRepository userRepository)
     {
-        _userRegisterCommandHandler = handler;
+        _sender = sender;
+        _userRepository = userRepository;
     }
 
     [HttpPost("register")]
@@ -20,7 +26,19 @@ public class UserController : ControllerBase
         UserRegisterCommand command,
         CancellationToken cancellationToken)
     {
-        var result = await _userRegisterCommandHandler.Handle(command, cancellationToken);
+        var result = await _sender.Send(command, cancellationToken);
+
+        return result.Match<IActionResult>(
+            success => Ok(success),
+            errors => BadRequest(errors));
+    }
+
+    [HttpGet("login")]
+    public async Task<IActionResult> Login(
+        UserLoginCommand command,
+        CancellationToken cancellationToken)
+    {
+        var result = await _sender.Send(command, cancellationToken);
 
         return result.Match<IActionResult>(
             success => Ok(success),

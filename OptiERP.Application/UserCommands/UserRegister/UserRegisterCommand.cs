@@ -13,6 +13,7 @@ namespace OptiERP.Application.UserCommands.UserRegister
         string Username,
         string Email,
         bool IsActive,
-        DateTime CreatedAt);
+        DateTime CreatedAt,
+        string Token);
 }
 
