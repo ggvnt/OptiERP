@@ -2,6 +2,8 @@ using ErrorOr;
 using Microsoft.EntityFrameworkCore;
 using OptiERP.Application.Interfaces;
 using OptiERP.Application.Interfaces.Authentication;
+using OptiERP.Application.UserCommands.GetCurrentUser;
+using OptiERP.Application.UserCommands.GetUserById;
 using OptiERP.Application.UserCommands.Login.Normal;
 using OptiERP.Application.UserCommands.UserRegister;
 using OptiERP.Domain.Entities;
@@ -127,5 +129,29 @@ public class UserRepository : IUserRepository
             token,
             user.Id,
             user.Email);
+    }
+
+    public async Task<ErrorOr<GetUserByIdResult>> GetUserByIdAsync(
+        Guid userId,
+        CancellationToken cancellationToken = default)
+    {
+        var user = await _dbContext.Users
+            .FirstOrDefaultAsync(
+                x => x.Id == userId,
+                cancellationToken);
+
+        if (user is null)
+        {
+            return Error.NotFound(
+                "User.Id",
+                "User with the provided ID does not exist.");
+        }
+
+        return new GetUserByIdResult(
+            user.Id,
+            user.Username,
+            user.Email,
+            user.IsActive,
+            user.CreatedAt);
     }
 }

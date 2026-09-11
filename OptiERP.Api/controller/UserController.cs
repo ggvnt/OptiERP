@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OptiERP.Application.Interfaces;
 using OptiERP.Application.Interfaces.Authentication;
+using OptiERP.Application.UserCommands.GetCurrentUser;
 using OptiERP.Application.UserCommands.Login.Normal;
 using OptiERP.Application.UserCommands.UserRegister;
 
@@ -52,15 +53,35 @@ public class UserController : ControllerBase
 
     [Authorize]
     [HttpGet("me")]
-    public IActionResult GetMe()
+    public async Task<IActionResult> GetMe(CancellationToken cancellationToken)
     {
-        return Ok(new
+        var result = await _mediator.Send(new GetCurrentUserQuery(), cancellationToken);
+
+        if (result.IsError)
         {
-            UserId = _currentUserService.UserId,
-            Email = _currentUserService.Email,
-            Username = _currentUserService.Username,
-            IsAuthenticated = _currentUserService.IsAuthenticated
-        });
+            return Problem(
+                statusCode: 401,
+                title: "Unauthorized",
+                detail: result.FirstError.Description);
+        }
+
+        return Ok(result.Value);
+    }
+
+    [Authorize]
+    [HttpGet("{userId}")]
+    public async Task<IActionResult> GetUserById(Guid userId, CancellationToken cancellationToken)
+    {
+        var result = await _userRepository.GetUserByIdAsync(userId, cancellationToken);
+
+        if (result.IsError)
+        {
+            return Problem(
+                statusCode: 404,
+                detail: result.FirstError.Description);
+        }
+
+        return Ok(result.Value);
     }
 
 }
