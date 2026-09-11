@@ -22,7 +22,7 @@ public class User
 
     private User()
     {
-        
+
     }
 
     private User(string username,
@@ -46,5 +46,12 @@ public class User
         passwordHash);
     }
 
+    public void Update(
+        string username,
+        string email)
+    {
+        Username = username;
+        Email = email;
+    }
 
 }

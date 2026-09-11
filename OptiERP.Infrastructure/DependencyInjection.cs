@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using OptiERP.Application.Interfaces;
 using OptiERP.Application.Interfaces.Authentication;
-using OptiERP.Application.UserCommands.UserRegister;
+using OptiERP.Application.UserCommands.Interfaces.Presistence;
 using OptiERP.Infrastructure.Authentication;
 using OptiERP.Infrastructure.Persistence;
 using OptiERP.Infrastructure.Repositories;

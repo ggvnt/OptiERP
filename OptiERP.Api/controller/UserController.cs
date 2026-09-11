@@ -2,9 +2,11 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OptiERP.Application.Interfaces;
-using OptiERP.Application.Interfaces.Authentication;
+using OptiERP.Application.UserCommands.GetAllUsers;
 using OptiERP.Application.UserCommands.GetCurrentUser;
+using OptiERP.Application.UserCommands.Interfaces.Presistence;
 using OptiERP.Application.UserCommands.Login.Normal;
+using OptiERP.Application.UserCommands.UpdateUser;
 using OptiERP.Application.UserCommands.UserRegister;
 
 namespace OptiERP.Api.Controller;
@@ -73,6 +75,51 @@ public class UserController : ControllerBase
     public async Task<IActionResult> GetUserById(Guid userId, CancellationToken cancellationToken)
     {
         var result = await _userRepository.GetUserByIdAsync(userId, cancellationToken);
+
+        if (result.IsError)
+        {
+            return Problem(
+                statusCode: 404,
+                detail: result.FirstError.Description);
+        }
+
+        return Ok(result.Value);
+    }
+
+    [Authorize]
+    [HttpGet]
+    public async Task<IActionResult> GetAllUsers(
+    CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(
+            new GetAllUsersCommand(),
+            cancellationToken);
+
+        if (result.IsError)
+        {
+            return Problem(
+                statusCode: 400,
+                detail: result.FirstError.Description);
+        }
+
+        return Ok(result.Value);
+    }
+    [Authorize]
+    [HttpPut("{id:guid}")]
+    public async Task<IActionResult> UpdateUser(
+    Guid id,
+    [FromBody] UpdateUserCommand command,
+    CancellationToken cancellationToken)
+    {
+        if (id != command.UserId)
+        {
+            return BadRequest(
+                "Route ID and User ID do not match.");
+        }
+
+        var result = await _mediator.Send(
+            command,
+            cancellationToken);
 
         if (result.IsError)
         {

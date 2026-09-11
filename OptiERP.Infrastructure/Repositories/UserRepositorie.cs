@@ -2,9 +2,11 @@ using ErrorOr;
 using Microsoft.EntityFrameworkCore;
 using OptiERP.Application.Interfaces;
 using OptiERP.Application.Interfaces.Authentication;
-using OptiERP.Application.UserCommands.GetCurrentUser;
+using OptiERP.Application.UserCommands.GetAllUsers;
 using OptiERP.Application.UserCommands.GetUserById;
+using OptiERP.Application.UserCommands.Interfaces.Presistence;
 using OptiERP.Application.UserCommands.Login.Normal;
+using OptiERP.Application.UserCommands.UpdateUser;
 using OptiERP.Application.UserCommands.UserRegister;
 using OptiERP.Domain.Entities;
 using OptiERP.Infrastructure.Persistence;
@@ -97,7 +99,7 @@ public class UserRepository : IUserRepository
             .FirstOrDefaultAsync(
                 x => x.Email == command.Email,
                 cancellationToken);
-        
+
         if (user is null)
         {
             return Error.NotFound(
@@ -154,4 +156,51 @@ public class UserRepository : IUserRepository
             user.IsActive,
             user.CreatedAt);
     }
+    public async Task<ErrorOr<List<GetAllUsersResult>>> GetAllUsersAsync(
+    CancellationToken cancellationToken = default)
+    {
+        var users = await _dbContext.Users
+            .ToListAsync(cancellationToken);
+
+        return users
+            .Select(user => new GetAllUsersResult(
+                user.Id,
+                user.Username,
+                user.Email,
+                user.IsActive,
+                user.CreatedAt))
+            .ToList();
+    }
+
+    public async Task<ErrorOr<UpdateUserResult>> UpdateUserAsync(
+    Guid userId,
+    string username,
+    string email,
+    CancellationToken cancellationToken = default)
+    {
+        var user = await _dbContext.Users
+            .FirstOrDefaultAsync(
+                x => x.Id == userId,
+                cancellationToken);
+
+        if (user is null)
+        {
+            return Error.NotFound(
+                "User.NotFound",
+                "User with the provided ID was not found.");
+        }
+
+        // Update user data
+        user.Update(username, email);
+
+        await _dbContext.SaveChangesAsync(cancellationToken);
+
+        return new UpdateUserResult(
+            user.Id,
+            user.Username,
+            user.Email,
+            user.IsActive,
+            user.CreatedAt);
+    }
+
 }
