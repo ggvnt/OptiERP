@@ -9,6 +9,7 @@ using OptiERP.Application.UserCommands.Login.Normal;
 using OptiERP.Application.UserCommands.UpdateUser;
 using OptiERP.Application.UserCommands.UserRegister;
 using OptiERP.Domain.Entities;
+using OptiERP.Domain.Entities.UserAggregate.Model;
 using OptiERP.Infrastructure.Persistence;
 
 namespace OptiERP.Infrastructure.Repositories;
@@ -67,6 +68,7 @@ public class UserRepository : IUserRepository
         var user = User.Create(
             command.Username,
             command.Email,
+            UserType.Employee,
             hashedPassword);
 
         // Add user to database
@@ -85,6 +87,7 @@ public class UserRepository : IUserRepository
             user.Id,
             user.Username,
             user.Email,
+            user.UserType,
             user.IsActive,
             user.CreatedAt,
             token);
@@ -201,6 +204,28 @@ public class UserRepository : IUserRepository
             user.Email,
             user.IsActive,
             user.CreatedAt);
+    }
+
+    public async Task<ErrorOr<bool>> DeleteUserAsync(
+        Guid userId,
+        CancellationToken cancellationToken = default)
+    {
+        var user = await _dbContext.Users
+            .FirstOrDefaultAsync(
+                x => x.Id == userId,
+                cancellationToken);
+
+        if (user is null)
+        {
+            return Error.NotFound(
+                "User.NotFound",
+                "User with the provided ID was not found.");
+        }
+
+        _dbContext.Users.Remove(user);
+        await _dbContext.SaveChangesAsync(cancellationToken);
+
+        return true;
     }
 
 }

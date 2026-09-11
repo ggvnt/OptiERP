@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using OptiERP.Domain.Entities.UserAggregate.Model;
 
 namespace OptiERP.Domain.Entities;
 
@@ -17,6 +18,7 @@ public class User
     public string PasswordHash { get; set; } = string.Empty;
 
     public bool IsActive { get; set; }
+    public UserType UserType { get; set; }
 
     public DateTime CreatedAt { get; set; }
 
@@ -25,9 +27,11 @@ public class User
 
     }
 
-    private User(string username,
-        string email,
-        string passwordHash)
+    private User(
+    string username,
+    string email,
+    UserType userType,
+    string passwordHash)
     {
         Id = Guid.NewGuid();
         Username = username;
@@ -35,15 +39,20 @@ public class User
         PasswordHash = passwordHash;
         IsActive = true;
         CreatedAt = DateTime.UtcNow;
+        UserType = userType;
     }
 
-    public static User Create(string username,
+    public static User Create(
+        string username,
         string email,
+        UserType userType,
         string passwordHash)
     {
-        return new User(username,
-        email,
-        passwordHash);
+        return new User(
+            username,
+            email,
+            userType,
+            passwordHash);
     }
 
     public void Update(

@@ -1,5 +1,7 @@
 using ErrorOr;
 using MediatR;
+using OptiERP.Domain.Entities;
+using OptiERP.Domain.Entities.UserAggregate.Model;
 
 namespace OptiERP.Application.UserCommands.UserRegister
 {
@@ -12,6 +14,7 @@ namespace OptiERP.Application.UserCommands.UserRegister
         Guid UserId,
         string Username,
         string Email,
+        UserType UserType,
         bool IsActive,
         DateTime CreatedAt,
         string Token);

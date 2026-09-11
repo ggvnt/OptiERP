@@ -18,4 +18,7 @@ public interface IUserRepository
     string username,
     string email,
     CancellationToken cancellationToken = default);
+    Task<ErrorOr<bool>> DeleteUserAsync(
+        Guid userId,
+        CancellationToken cancellationToken = default);
 }

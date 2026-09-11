@@ -131,4 +131,22 @@ public class UserController : ControllerBase
         return Ok(result.Value);
     }
 
+    [Authorize]
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> DeleteUser(
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        var result = await _userRepository.DeleteUserAsync(id, cancellationToken);
+
+        if (result.IsError)
+        {
+            return Problem(
+                statusCode: 404,
+                detail: result.FirstError.Description);
+        }
+
+        return Ok();
+    }
+
 }

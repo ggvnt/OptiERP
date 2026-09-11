@@ -1,5 +1,6 @@
 using ErrorOr;
 using MediatR;
+using OptiERP.Application.UserCommands.Interfaces.Presistence;
 
 namespace OptiERP.Application.UserCommands.UserRegister;
 
