@@ -1,5 +1,7 @@
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OptiERP.Application.Interfaces;
 using OptiERP.Application.Interfaces.Authentication;
 using OptiERP.Application.UserCommands.Login.Normal;
 using OptiERP.Application.UserCommands.UserRegister;
@@ -12,13 +14,16 @@ namespace OptiERP.Api.Controller;
 public class UserController : ControllerBase
 {
     private readonly ISender _sender;
-    private readonly IJwtTokenGenerator _jwtTokenGenerator;
     private readonly IUserRepository _userRepository;
+    private readonly ICurrentUserService _currentUserService;
+    private readonly IMediator _mediator;
 
-    public UserController(ISender sender, IUserRepository userRepository)
+    public UserController(ISender sender, IUserRepository userRepository, ICurrentUserService currentUserService, IMediator mediator)
     {
         _sender = sender;
         _userRepository = userRepository;
+        _currentUserService = currentUserService;
+        _mediator = mediator;
     }
 
     [HttpPost("register")]
@@ -43,6 +48,19 @@ public class UserController : ControllerBase
         return result.Match<IActionResult>(
             success => Ok(success),
             errors => BadRequest(errors));
+    }
+
+    [Authorize]
+    [HttpGet("me")]
+    public IActionResult GetMe()
+    {
+        return Ok(new
+        {
+            UserId = _currentUserService.UserId,
+            Email = _currentUserService.Email,
+            Username = _currentUserService.Username,
+            IsAuthenticated = _currentUserService.IsAuthenticated
+        });
     }
 
 }

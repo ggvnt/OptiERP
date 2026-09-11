@@ -35,6 +35,8 @@ public static class DependencyInjection
 
         // JWT Token Generator
         services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
+        services.AddSingleton<ICurrentUserService, CurrentUserService>();
+        services.AddHttpContextAccessor();
 
         return services;
     }
